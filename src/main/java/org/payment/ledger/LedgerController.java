@@ -1,6 +1,5 @@
 package org.payment.ledger;
 
-import io.quarkus.runtime.annotations.QuarkusMain;
 import io.smallrye.common.annotation.Blocking;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -11,7 +10,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.ConfigProvider;
 import org.payment.util.CurrencyConverter;
 import org.payment.util.CurrencyFactory;
 

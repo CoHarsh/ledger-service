@@ -1,16 +1,22 @@
 package org.payment.settlement;
 
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.payment.consVar.DBQuery;
+import org.payment.consVar.settlement.SettlementStatusEnum;
+
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.UUID;
 
 @ApplicationScoped
-public class SettlementRepository {
+public class SettlementRepository implements PanacheRepository<Settlement> {
 
     @Inject
     DataSource dataSource;
@@ -29,4 +35,32 @@ public class SettlementRepository {
             throw new RuntimeException("Error inserting settlement: " + settlement, e);
         }
     }
+
+    @Transactional
+    public List<Settlement> lockBatch(int limit) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(DBQuery.LOCK_SETTLEMENT_BATCH_QUERY)) {
+            ps.setInt(1, limit);
+            try (var rs = ps.executeQuery()) {
+                List<Settlement> settlements = new java.util.ArrayList<>();
+                while (rs.next()) {
+                    Settlement s = Settlement.builder()
+                            .settlementId(rs.getObject("settlement_id", UUID.class))
+                            .reference(rs.getObject("reference_pay_event", UUID.class))
+                            .fromActorId(rs.getString("from_actor"))
+                            .toActorId(rs.getString("to_actor"))
+                            .amount(rs.getBigDecimal("amount").toBigInteger())
+                            .status(SettlementStatusEnum.valueOf(rs.getString("status")))
+                            .createdAt(rs.getTimestamp("created_at"))
+                            .updatedAt(rs.getTimestamp("updated_at"))
+                            .build();
+                    settlements.add(s);
+                }
+                return settlements;
+            }
+        }  catch (SQLException e) {
+            throw new RuntimeException("Error locking settlement batch", e);
+        }
+    }
+
 }

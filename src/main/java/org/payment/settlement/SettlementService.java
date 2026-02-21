@@ -14,10 +14,6 @@ public class SettlementService {
     public void createSettlement(Settlement settlement) throws RuntimeException {
         log.debug("Creating settlement: {}", settlement);
         try {
-            // In real implementation, we would have more complex logic here
-            // For example, we might check if the settlement already exists, or if the actors are valid
-            // We might also have some business rules around the amount or the timing of the settlement
-            // For this example, we will just insert the settlement into the database
             settlementRepository.insertSettlement(settlement);
             log.debug("Successfully created settlement: {}", settlement);
         } catch (Exception e) {

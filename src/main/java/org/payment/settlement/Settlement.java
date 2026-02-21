@@ -1,8 +1,10 @@
 package org.payment.settlement;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.payment.consVar.settlement.SettlementStatusEnum;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.UUID;

@@ -4,5 +4,6 @@ public enum SettlementStatusEnum {
     PENDING,
     SETTLED,
     FAILED,
-    ATTENTION_REQUIRED
+    ATTENTION_REQUIRED,
+    PROCESSING
 }
