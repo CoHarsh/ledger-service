@@ -1,4 +1,4 @@
-package org.payment.constant;
+package org.payment.consVar;
 
 public class ConstantEnum {
         public enum Bucket {

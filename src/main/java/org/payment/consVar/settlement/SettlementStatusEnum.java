@@ -1,4 +1,4 @@
-package org.payment.constant.Settlement;
+package org.payment.consVar.settlement;
 
 public enum SettlementStatusEnum {
     PENDING,

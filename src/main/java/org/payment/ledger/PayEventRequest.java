@@ -1,5 +1,7 @@
 package org.payment.ledger;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,11 +13,14 @@ import java.util.UUID;
 @ToString
 @Setter
 public class PayEventRequest {
+    @NotNull
     public UUID payEventId; // client generated id for idempotency
     public long timestamp;
     public String actorId; // current user
     public String counterActorId; // counterparty
-    public BigDecimal amount;
+    @NotNull
+    @Positive
+    public float amount;
     public String signature;
 }
 

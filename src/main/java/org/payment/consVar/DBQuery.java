@@ -1,4 +1,4 @@
-package org.payment.constant;
+package org.payment.consVar;
 
 public class DBQuery {
     public static final String INSERT_LEDGER_EVENT_QUERY = """
@@ -22,7 +22,7 @@ public class DBQuery {
         """;
 
     public static final String INSERT_SETTLEMENT_QUERY = """
-        INSERT INTO ledger.settlements
+        INSERT INTO ledger.settlement
         (settlement_id, reference_pay_event, from_actor, to_actor, amount, status, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         """;

@@ -2,8 +2,10 @@ package org.payment.ledger;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.payment.constant.ConstantEnum.Bucket;
-import org.payment.constant.DBQuery;
+import org.payment.consVar.ConstantEnum.Bucket;
+import org.payment.consVar.DBQuery;
+import org.payment.util.CurrencyConverter;
+import org.payment.util.CurrencyFactory;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -25,15 +27,15 @@ public class LedgerRepository {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps =
                      conn.prepareStatement(DBQuery.INSERT_LEDGER_EVENT_QUERY)) {
-
+            CurrencyConverter converter = CurrencyFactory.defaultCurrency(); //INR only
             for (LedgerEvent event : ledgerEvents) {
 
                 ps.setObject(1, event.eventId);
-                ps.setTimestamp(2, event.timestamp);
+                ps.setTimestamp(2, Timestamp.from(event.timestamp));
                 ps.setString(3, event.actorId);
                 ps.setString(4, event.bucket.name());
                 ps.setString(5, event.direction.name());
-                ps.setBigDecimal(6, event.amount);
+                ps.setBigDecimal(6, new BigDecimal(event.getAmount()));
                 ps.setObject(7, event.reference);
                 ps.setString(8, event.signature);
 
@@ -63,7 +65,7 @@ public class LedgerRepository {
 
     // ---------- BALANCE ----------
 
-    public BigDecimal getBalance(String actorId, Bucket bucket)
+    public long getBalance(String actorId, Bucket bucket)
             throws SQLException {
 
         try (Connection conn = dataSource.getConnection();
@@ -74,7 +76,7 @@ public class LedgerRepository {
             ps.setString(2, bucket.name());
 
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next() ? rs.getBigDecimal(1) : BigDecimal.ZERO;
+                return rs.next() ? rs.getLong(1) : 0L;
             }
         }
     }

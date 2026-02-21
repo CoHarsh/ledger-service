@@ -3,8 +3,11 @@ package org.payment.ledger;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import org.payment.constant.ConstantEnum.Direction;
-import org.payment.constant.ConstantEnum.Bucket;
+import org.payment.consVar.ConstantEnum.Direction;
+import org.payment.consVar.ConstantEnum.Bucket;
+import org.payment.util.CurrencyConverter;
+import org.payment.util.CurrencyFactory;
+
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
@@ -22,8 +25,8 @@ public class ValidatorEngine {
         if(ledgerRepository.eventExists(payEventId)){
             throw new RuntimeException("Duplicate event: " + event.getPayEventId());
         }
-        BigDecimal balance = ledgerRepository.getBalance(event.getActorId(), Bucket.USER_ESCROW);
-        if (balance.compareTo(event.getAmount()) < 0) {
+        long balance = ledgerRepository.getBalance(event.getActorId(), Bucket.USER_ESCROW);
+        if (balance < 0) {
             throw new RuntimeException("Insufficient DEBIT balance for event: " + event.getPayEventId());
         }
         List<LedgerEvent> ledgerEvents = createLedgerEvents(event);
@@ -33,7 +36,7 @@ public class ValidatorEngine {
 
     private List<LedgerEvent> createLedgerEvents(PayEvent event){
         log.debug("Creating ledger events for pay event: {}", event.getPayEventId());
-
+        CurrencyConverter converter = CurrencyFactory.defaultCurrency(); //INR only
         LedgerEvent debitEvent = LedgerEvent.builder()
                 .eventId(UUID.randomUUID())
                 .timestamp(event.getTimestamp())

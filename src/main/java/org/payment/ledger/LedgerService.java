@@ -4,10 +4,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.payment.constant.Settlement.SettlementStatusEnum;
+import org.payment.consVar.settlement.SettlementStatusEnum;
 import org.payment.settlement.Settlement;
 import org.payment.settlement.SettlementService;
 import java.util.List;
+import org.payment.ledger.PayEvent;
+
 
 @ApplicationScoped
 @Slf4j
@@ -48,6 +50,7 @@ public class LedgerService {
 
     private Settlement payEventToSettlement(PayEvent event) {
         return Settlement.builder()
+                .settlementId(java.util.UUID.randomUUID())
                 .reference(event.getPayEventId())
                 .fromActorId(event.getActorId())
                 .toActorId(event.getCounterActorId())

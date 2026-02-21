@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS ledger.ledger_event (
     bucket VARCHAR(50) NOT NULL CHECK (bucket IN ('USER_ESCROW', 'USER_PENDING')),
     direction VARCHAR(10) NOT NULL CHECK (direction IN ('CREDIT', 'DEBIT')),
     amount BIGINT NOT NULL,
-    reference VARCHAR(100),
+    reference UUID NOT NULL,
     signature TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (actor_id, bucket, reference)
