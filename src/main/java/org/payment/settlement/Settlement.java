@@ -1,9 +1,7 @@
 package org.payment.settlement;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.*;
+import org.payment.consVar.SettlementType;
 import org.payment.consVar.settlement.SettlementStatusEnum;
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -22,6 +20,7 @@ public class Settlement {
     private String toActorId;
     private BigInteger amount;
     private SettlementStatusEnum status; // PENDING, SETTLED, FAILED, ATTENTION_REQUIRED
+    private SettlementType settlementType; // PAYMENT, FUNDING, WITHDRAWAL
     private Timestamp createdAt;
     private Timestamp updatedAt;
 }

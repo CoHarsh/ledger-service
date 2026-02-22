@@ -36,27 +36,27 @@ Offline-first payment ledger service built with Quarkus, implementing an append-
 - [X] Create balance projection tables
 - [ ] Build event replay → balance projection worker
 - [ ] Implement real-time balance updates
-- [ ] Add API to query user escrow balance
+- [X] Add API to query user escrow balance
 - [ ] Add projection rebuild command
 - [ ] Performance/load test projections
 
 ## Phase 3 — Escrow Logic
-- [ ] Implement preload funds flow
+- [X] Implement preload funds flow
 - [ ] Implement offline escrow debit flow
-- [ ] Enforce escrow limits per user
+- [X] Enforce escrow limits per user
 - [ ] Add escrow expiry rules
 
 ## Phase 4 — Sync & Ordering
 - [ ] Implement event ordering logic
-- [ ] Add deduplication on sync
+- [X] Add deduplication on sync
 - [ ] Handle offline event queues
 - [ ] Add conflict resolution rules
 
 ## Phase 5 — Merchant Settlement
-- [ ] Build merchant pending bucket logic
-- [ ] Implement settlement worker
+- [X] Build merchant pending bucket logic
+- [X] Implement settlement worker
 - [ ] Add payout retry mechanism
-- [ ] Track settlement status
+- [X] Track settlement status
 
 ## Phase 6 — Security
 - [ ] Implement event signature verification
@@ -76,4 +76,10 @@ Offline-first payment ledger service built with Quarkus, implementing an append-
 - [ ] Write integration tests
 - [ ] Deployment documentation
 
+
+
+API Endpoints:
+- `POST /events` - Append a new ledger event (preload, debit, settlement)
+- `GET wallet/balance/{userId}` - Get current escrow balance for a user
+- `POST wallet/load` - Preload funds into escrow
 

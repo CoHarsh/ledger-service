@@ -40,4 +40,9 @@ public class DBQuery {
         )
         RETURNING settlement_id, reference_pay_event, from_actor, to_actor, amount, status, created_at, updated_at
         """;
+    public static final String UPDATE_SETTLEMENT_STATUS_QUERY = """
+        UPDATE ledger.settlement
+        SET status = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE settlement_id = ANY ( ? )
+        """;
 }

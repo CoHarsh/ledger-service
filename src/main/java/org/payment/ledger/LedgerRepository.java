@@ -80,4 +80,8 @@ public class LedgerRepository {
             }
         }
     }
+
+    public void insertLedgerEvent(LedgerEvent escrowLoadSignature) {
+
+    }
 }

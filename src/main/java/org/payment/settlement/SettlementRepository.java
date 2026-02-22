@@ -9,6 +9,7 @@ import org.payment.consVar.settlement.SettlementStatusEnum;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -33,6 +34,19 @@ public class SettlementRepository implements PanacheRepository<Settlement> {
                 ps.executeUpdate();
         }  catch (SQLException e) {
             throw new RuntimeException("Error inserting settlement: " + settlement, e);
+        }
+    }
+
+    public void updateSettlementStatus(List<UUID> settlementIds, SettlementStatusEnum newStatus) throws SQLException,RuntimeException {
+        if (settlementIds.isEmpty()) return;
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(DBQuery.UPDATE_SETTLEMENT_STATUS_QUERY)) {
+            ps.setString(1, newStatus.name());
+            Array sqlArray = conn.createArrayOf("uuid", settlementIds.toArray());
+            ps.setArray(2, sqlArray);
+            ps.executeUpdate();
+        }  catch (SQLException e) {
+            throw new RuntimeException("Error updating settlement status for settlements: " + settlementIds, e);
         }
     }
 

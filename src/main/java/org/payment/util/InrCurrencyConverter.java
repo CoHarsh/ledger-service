@@ -18,7 +18,7 @@ public class InrCurrencyConverter implements CurrencyConverter {
     }
 
     @Override
-    public float toMajorUnit(BigInteger minorAmount) {
+    public float toMajorUnit(long minorAmount) {
         // 1050 paise → ₹10.50
         return new BigDecimal(minorAmount)
                 .divide(new BigDecimal(HUNDRED), 2, RoundingMode.HALF_UP)

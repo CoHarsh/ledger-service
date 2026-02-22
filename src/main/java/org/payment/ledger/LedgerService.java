@@ -3,12 +3,20 @@ package org.payment.ledger;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.payment.consVar.ConstantEnum.Bucket;
+import org.payment.consVar.ConstantEnum.Direction;
+import org.payment.consVar.EscrowFundStatus;
 import org.payment.consVar.settlement.SettlementStatusEnum;
+import org.payment.escrow.EscrowRequest;
+import org.payment.escrow.EscrowResponse;
 import org.payment.settlement.Settlement;
 import org.payment.settlement.SettlementService;
+import org.payment.util.CurrencyConverter;
+import org.payment.util.CurrencyFactory;
+
 import java.util.List;
-import org.payment.ledger.PayEvent;
 
 
 @ApplicationScoped
@@ -46,6 +54,24 @@ public class LedgerService {
         }
         ledgerRepository.insertLedgerEvents(ledgerEvents);
         settlementService.createSettlement(payEventToSettlement(event));
+    }
+
+    public EscrowResponse getEscrowBalance(String actorId) {
+        log.debug("Retrieving escrow balance for actorId: {}", actorId);
+        CurrencyConverter converter = CurrencyFactory.defaultCurrency();
+            try {
+                long balance = ledgerRepository.getBalance(actorId, Bucket.USER_ESCROW);
+                return EscrowResponse.builder()
+                        .actorId(actorId)
+                        .balance(converter.toMajorUnit(balance))
+                        .message("Successfully retrieved escrow balance for actorId: " + actorId)
+                        .status(EscrowFundStatus.FETCHED)
+                        .currency(converter.getCurrencyCode())
+                        .build();
+            } catch (Exception e) {
+                log.error("Error retrieving escrow balance for actorId: {}", actorId, e);
+                throw new RuntimeException(e);
+            }
     }
 
     private Settlement payEventToSettlement(PayEvent event) {
