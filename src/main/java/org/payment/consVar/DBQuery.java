@@ -1,4 +1,4 @@
-package org.payment.constant;
+package org.payment.consVar;
 
 public class DBQuery {
     public static final String INSERT_LEDGER_EVENT_QUERY = """
@@ -22,8 +22,27 @@ public class DBQuery {
         """;
 
     public static final String INSERT_SETTLEMENT_QUERY = """
-        INSERT INTO ledger.settlements
+        INSERT INTO ledger.settlement
         (settlement_id, reference_pay_event, from_actor, to_actor, amount, status, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        """;
+
+    public static final String LOCK_SETTLEMENT_BATCH_QUERY = """
+        UPDATE ledger.settlement
+        SET status = 'PROCESSING', updated_at = CURRENT_TIMESTAMP
+        WHERE settlement_id IN (
+            SELECT settlement_id
+            FROM ledger.settlement
+            WHERE status = 'PENDING'
+            ORDER BY created_at
+            LIMIT ?
+            FOR UPDATE SKIP LOCKED
+        )
+        RETURNING settlement_id, reference_pay_event, from_actor, to_actor, amount, status, created_at, updated_at
+        """;
+    public static final String UPDATE_SETTLEMENT_STATUS_QUERY = """
+        UPDATE ledger.settlement
+        SET status = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE settlement_id = ANY ( ? )
         """;
 }

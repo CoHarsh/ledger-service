@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS ledger.ledger_event (
     bucket VARCHAR(50) NOT NULL CHECK (bucket IN ('USER_ESCROW', 'USER_PENDING')),
     direction VARCHAR(10) NOT NULL CHECK (direction IN ('CREDIT', 'DEBIT')),
     amount BIGINT NOT NULL,
-    reference VARCHAR(100),
+    reference UUID NOT NULL,
     signature TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (actor_id, bucket, reference)
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS ledger.settlement (
     from_actor VARCHAR(100) NOT NULL,
     to_actor VARCHAR(100) NOT NULL,
     amount BIGINT NOT NULL,
-    status VARCHAR(20) NOT NULL CHECK (status IN ('PENDING', 'COMPLETED', 'FAILED', 'ATTENTION_REQUIRED')),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('PENDING', 'COMPLETED', 'FAILED', 'ATTENTION_REQUIRED', 'PROCESSING')),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- Comma removed here
 );
